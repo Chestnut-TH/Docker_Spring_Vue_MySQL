@@ -1,0 +1,43 @@
+version: '3.6'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    build: ./mysql
+    environment:
+      MYSQL_DATABASE: "testdb"     #DBの名前は任意に設定してください
+      MYSQL_ROOT_USER: "root"       #root権限のユーザ名は任意に設定してください
+      MYSQL_ROOT_PASSWORD: "root"   #root権限のパスワードは任意に設定してください
+      MYSQL_USER: "user"            #作業ユーザ権限のユーザ名は任意に設定してください
+      MYSQL_PASSWORD: "user"        #作業ユーザ権限のパスワードは任意に設定してください
+      TZ: "Asia/Tokyo"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/sql:/docker-entrypoint-initdb.d # 「:」の左がローカル環境で右がコンテナの環境
+      - ./mysql/settings/:/var/lib/mysql        # 「:」の左がローカル環境で右がコンテナの環境
+  spring:
+    image: openjdk:8
+    container_name: spring
+    build: ./spring
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    tty: true
+    volumes:
+      - ../spring_project:/srv:cached          # 「:」の左がローカル環境で右がコンテナの環境
+    working_dir: /srv
+  vue:
+    container_name: vue
+    build: ./vue
+    ports:
+      - 9000:8080
+    volumes:
+      - ../vue_project:/usr/src/app:cached    # 「:」の左がローカル環境で右がコンテナの環境
+    stdin_open: true
+    tty: true
+volumes:
+  mysql_db:
+    driver: local

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="app.spring_project.testapp.mapper.SearchMapper">
+    <select id="selectUser" resultType="app.spring_project.testapp.accessors.UserInfo">
+        SELECT id, name FROM user
+    </select>
+</mapper>
